@@ -11,7 +11,7 @@ export default function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<ItemListContainer greeting="¡Bienvenido a S&N Verdulería!" />} />
-          <Route path="/category/:categParam" element={<ItemListContainer greeting="Productos filtrados" />} />
+          <Route path="/category/:categParam" element={<ItemListContainer greeting="Productos" />} />
           <Route path="/detalle/:idParam" element={<ItemDetailContainer />} />
           <Route path="*" element={<h1>404: Página no encontrada</h1>} />
         </Routes>
