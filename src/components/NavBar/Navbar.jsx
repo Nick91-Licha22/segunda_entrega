@@ -24,7 +24,7 @@ export default function NavBar() {
           <a href="#">Contacto</a>
         </li>
       </ul>
-      <Link to="/cart">
+      <Link to="/cart" className="cart-link">
         <CartWidget />
       </Link>
     </nav>

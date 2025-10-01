@@ -1,27 +1,13 @@
-import { useState } from "react";
-
-export default function ButtonAddToCart() {
-  const [statusInCart, setStatusInCart] = useState("No agregado.");
-  const [showRemoveButton, setShowRemoveButton] = useState(false);
-
-  function handleAdd() {
-    alert("¡Agregado al carrito!");
-    setStatusInCart("Agregado al carrito. ✅");
-    setShowRemoveButton(true);
-  }
-
-  function handleRemove() {
-    alert("Eliminado del carrito.");
-    setStatusInCart("No agregado.");
-    setShowRemoveButton(false);
-  }
-
+export default function ButtonAddToCart({ onAddToCart, text = "Agregar al Carrito" }) {
+  
   return (
     <div className="button-cart">
-      <button onClick={handleAdd}>Agregar</button>
-      {showRemoveButton && <button onClick={handleRemove}>Eliminar</button>}
+      <button onClick={onAddToCart} className="add-to-cart-btn">
+        {text}
+      </button>
+      
       <br />
-      <small>{statusInCart}</small>
+      <small>Haz clic para añadir tu pedido.</small> 
     </div>
   );
 }

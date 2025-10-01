@@ -1,5 +1,5 @@
 .cantidad-container {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
 }
 
@@ -11,17 +11,28 @@
 
 .cantidad-buttons button {
   padding: 0.5rem 1rem;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #ffcc00;
-  color: #333;
+  background-color: #444; 
+  color: #ffcc00; 
   font-weight: bold;
+  transition: all 0.2s;
+}
+
+.cantidad-buttons button.selected-quantity {
+  background-color: #ffcc00;
+  color: #333; 
+  border-color: #aaffaa;
+}
+
+.cantidad-buttons button:hover:not(.selected-quantity) {
+  background-color: #555;
 }
 
 .seleccion-text {
   margin-top: 1rem;
   font-size: 1.1rem;
   font-style: italic;
-  color: #aaffaa;
+  color: #aaffaa; 
 }

@@ -1,18 +1,22 @@
-import { useState } from "react";
 import "./PesoPick.css";
-
-export default function PesoPick() {
-  const [cantidad, setCantidad] = useState("1 Kilo");
+export default function PesoPick({ selectedQuantity, onSelect }) {
+  const options = ["1/2 Kilo", "1 Kilo", "2 Kilos", "3 Kilos"];
 
   return (
     <div className="cantidad-container">
       <p>Elige la cantidad:</p>
       <div className="cantidad-buttons">
-        <button onClick={() => setCantidad("1/2 Kilo")}>1/2 Kilo</button>
-        <button onClick={() => setCantidad("1 Kilo")}>1 Kilo</button>
-        <button onClick={() => setCantidad("2 Kilos")}>2 Kilos</button>
+        {options.map((option) => (
+          <button
+            key={option}
+            onClick={() => onSelect(option)} 
+            className={selectedQuantity === option ? "selected-quantity" : ""}
+          >
+            {option}
+          </button>
+        ))}
       </div>
-      <p className="seleccion-text">Seleccionaste: {cantidad}</p>
+      <p className="seleccion-text">Seleccionaste: {selectedQuantity}</p>
     </div>
   );
 }
