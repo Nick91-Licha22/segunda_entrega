@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import Swal from 'sweetalert2'; 
 
 const cartContext = createContext();
 
@@ -38,7 +39,7 @@ export function CartProvider(props) {
     const weightToAdd = getNumericWeight(newItem.quantityLabel);
 
     if (index !== -1) {
-      newCartItems[index].count = newCartItems[index].count + weightToAdd;
+      newCartItems[index].count = parseFloat((newCartItems[index].count + weightToAdd).toFixed(1));
     } else {
       newCartItems.push({ 
           ...newItem, 
@@ -48,7 +49,18 @@ export function CartProvider(props) {
     }
 
     setCartItems(newCartItems);
-    alert(`¡Agregaste ${newItem.quantityLabel} de ${newItem.title} al carrito! 🛒`);
+    
+    Swal.fire({
+      toast: true,
+      position: 'bottom-end',
+      icon: 'success',
+      title: `¡Agregaste ${newItem.quantityLabel} de ${newItem.title} al carrito! 🛒`,
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      background: '#444',
+      color: '#f5f5f5'
+    });
   }
 
   function removeItem(baseId, removeWeight) {
@@ -67,9 +79,50 @@ export function CartProvider(props) {
   }
 
   function removeItemCompleto(baseId) {
-    const newCart = cartItems.filter(item => item.baseId !== baseId);
-    setCartItems(newCart);
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡Eliminarás todas las unidades de este producto!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'No, cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newCart = cartItems.filter(item => item.baseId !== baseId);
+        setCartItems(newCart);
+        Swal.fire(
+          'Eliminado!',
+          'El producto ha sido quitado del carrito.',
+          'success'
+        )
+      }
+    });
   }
+  
+  async function finalizePurchase() {
+      const { value: email } = await Swal.fire({
+          title: 'Finalizar Compra',
+          text: 'Ingresa tu correo para confirmar el pedido:',
+          input: 'email',
+          inputLabel: 'Tu dirección de correo',
+          inputPlaceholder: 'ejemplo@correo.com',
+          showCancelButton: true,
+          confirmButtonText: 'Confirmar Pedido',
+          cancelButtonText: 'Cancelar'
+      });
+
+      if (email) {
+          Swal.fire({
+              title: '¡Pedido Confirmado!',
+              html: `Enviaremos la confirmación a <b>${email}</b>.<br>Gracias por elegir S&N Verdulería.`,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+          });
+      }
+  }
+
 
   function countItems() {
     return cartItems.reduce((acc, item) => acc + item.count, 0);
@@ -87,6 +140,7 @@ export function CartProvider(props) {
         countItems, 
         calculateTotal, 
         formatTotalWeight, 
+        finalizePurchase,
         removeItem: (baseId) => removeItem(baseId, 1) 
     }}>
       {props.children}
