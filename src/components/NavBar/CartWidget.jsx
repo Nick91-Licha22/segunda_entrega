@@ -1,7 +1,6 @@
 import { BsCart3 } from "react-icons/bs";
 import { useContext } from "react"; 
-import cartContext from "../../context/cartContext"; 
-
+import cartContext from "../context/cartContext";
 export default function CartWidget() {
   const { countItems } = useContext(cartContext);
   const totalItems = countItems(); 

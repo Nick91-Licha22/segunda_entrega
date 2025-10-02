@@ -4,7 +4,7 @@ import { useEffect, useState, useContext } from "react";
 import PesoPick from "../PesoPick/PesoPick";
 import ButtonAddToCart from "../ButtonAddToCart/ButtonAddToCart";
 import "./ItemDetailContainer.css";
-import cartContext from "../../context/cartContext";
+import cartContext from "../context/cartContext";
 
 function ItemDetailContainer() {
   const { idParam } = useParams();
