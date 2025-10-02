@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import "./CartContainer.css";
 
 function CartContainer() {
-  const { cartItems, removeItemCompleto, removeItem, calculateTotal, formatTotalWeight } = useContext(cartContext);
+  const { cartItems, removeItemCompleto, removeItem, calculateTotal, formatTotalWeight, finalizePurchase } = useContext(cartContext);
 
   if (cartItems.length === 0) {
     return (
@@ -47,7 +47,7 @@ function CartContainer() {
 
       <div className="cart-summary">
         <h3>Total de la compra: **$ {calculateTotal()}**</h3>
-        <button className="btn-checkout">Ir a Pagar</button>
+        <button onClick={finalizePurchase} className="btn-checkout">Ir a Pagar</button>
       </div>
     </div>
   );

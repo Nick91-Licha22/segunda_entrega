@@ -120,6 +120,7 @@ export function CartProvider(props) {
               icon: 'success',
               confirmButtonText: 'Aceptar'
           });
+          setCartItems([]);
       }
   }
 
