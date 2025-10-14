@@ -1,60 +1,28 @@
 import { createContext, useState } from "react";
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
+import { createOrder } from "../../data/firebase";
 
 const cartContext = createContext();
 
-function getNumericWeight(quantityLabel) {
-  if (quantityLabel.includes("1/2")) return 0.5;
-  if (quantityLabel.includes("Kilo")) {
-    const parts = quantityLabel.split(' ');
-    return parseInt(parts[0]) || 1; 
-  }
-  return 1;
-}
-
-function formatTotalWeight(total) {
-  if (total === 0.5) return "1/2 Kilo";
-  if (total === 0) return "0 Kilos";
-
-  const kilos = Math.floor(total);
-  const media = total % 1;
-  let result = [];
-  
-  if (kilos > 0) {
-    result.push(`${kilos} Kilo${kilos > 1 ? 's' : ''}`);
-  }
-  if (media === 0.5) {
-    result.push("1/2 Kilo");
-  }
-  
-  return result.join(" y ");
-}
-
 export function CartProvider(props) {
   const [cartItems, setCartItems] = useState([]);
-  
+
   function addToCart(newItem) {
-    const newCartItems = structuredClone(cartItems);
-    const index = cartItems.findIndex(item => item.baseId === newItem.baseId);
-    const weightToAdd = getNumericWeight(newItem.quantityLabel);
+    const newCartItems = [...cartItems];
+    const index = newCartItems.findIndex(item => item.id === newItem.id);
 
     if (index !== -1) {
-      newCartItems[index].count = parseFloat((newCartItems[index].count + weightToAdd).toFixed(1));
+      newCartItems[index].count += newItem.count;
     } else {
-      newCartItems.push({ 
-          ...newItem, 
-          count: weightToAdd,
-          baseId: newItem.baseId 
-      });
+      newCartItems.push(newItem);
     }
-
     setCartItems(newCartItems);
-    
+
     Swal.fire({
       toast: true,
       position: 'bottom-end',
       icon: 'success',
-      title: `¡Agregaste ${newItem.quantityLabel} de ${newItem.title} al carrito! 🛒`,
+      title: `¡Agregaste ${newItem.count} Kilo(s) de ${newItem.title} al carrito! 🛒`,
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
@@ -63,22 +31,21 @@ export function CartProvider(props) {
     });
   }
 
-  function removeItem(baseId, removeWeight) {
-    let newCartItems = structuredClone(cartItems);
-    const index = newCartItems.findIndex(item => item.baseId === baseId);
+  function removeItem(itemId) {
+    let newCartItems = [...cartItems];
+    const index = newCartItems.findIndex(item => item.id === itemId);
     
-    if (index === -1) return;
-    
-    if (newCartItems[index].count - removeWeight > 0) {
-      newCartItems[index].count = parseFloat((newCartItems[index].count - removeWeight).toFixed(1)); 
-    } else {
-      newCartItems = newCartItems.filter(item => item.baseId !== baseId);
+    if (index !== -1) {
+      if (newCartItems[index].count > 1) {
+        newCartItems[index].count -= 1;
+      } else {
+        newCartItems = newCartItems.filter(item => item.id !== itemId);
+      }
+      setCartItems(newCartItems);
     }
-    
-    setCartItems(newCartItems);
   }
 
-  function removeItemCompleto(baseId) {
+  function removeItemCompleto(itemId) {
     Swal.fire({
       title: '¿Estás seguro?',
       text: "¡Eliminarás todas las unidades de este producto!",
@@ -90,40 +57,60 @@ export function CartProvider(props) {
       cancelButtonText: 'No, cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        const newCart = cartItems.filter(item => item.baseId !== baseId);
+        const newCart = cartItems.filter(item => item.id !== itemId);
         setCartItems(newCart);
-        Swal.fire(
-          'Eliminado!',
-          'El producto ha sido quitado del carrito.',
-          'success'
-        )
+        Swal.fire('Eliminado!', 'El producto ha sido quitado del carrito.', 'success');
       }
     });
   }
-  
+
   async function finalizePurchase() {
-      const { value: email } = await Swal.fire({
-          title: 'Finalizar Compra',
-          text: 'Ingresa tu correo para confirmar el pedido:',
-          input: 'email',
-          inputLabel: 'Tu dirección de correo',
-          inputPlaceholder: 'ejemplo@correo.com',
-          showCancelButton: true,
-          confirmButtonText: 'Confirmar Pedido',
-          cancelButtonText: 'Cancelar'
-      });
-
-      if (email) {
-          Swal.fire({
-              title: '¡Pedido Confirmado!',
-              html: `Enviaremos la confirmación a <b>${email}</b>.<br>Gracias por elegir S&N Verdulería.`,
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-          });
-          setCartItems([]);
+    const { value: formValues } = await Swal.fire({
+      title: 'Finalizar Compra',
+      html:
+        '<input id="swal-input-name" class="swal2-input" placeholder="Nombre completo">' +
+        '<input id="swal-input-email" class="swal2-input" placeholder="Correo electrónico">' +
+        '<input id="swal-input-phone" class="swal2-input" placeholder="Teléfono">',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar Pedido',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        return {
+          name: document.getElementById('swal-input-name').value,
+          email: document.getElementById('swal-input-email').value,
+          phone: document.getElementById('swal-input-phone').value
+        };
       }
-  }
+    });
 
+    if (formValues) {
+      if (!formValues.name || !formValues.email || !formValues.phone) {
+        Swal.fire({ icon: 'error', title: 'Oops...', text: '¡Debes completar todos los campos para continuar!' });
+        return;
+      }
+
+      const orderData = {
+        buyer: formValues,
+        items: cartItems.map(item => ({ id: item.id, title: item.title, price: item.price, quantity: item.count })),
+        total: calculateTotal(),
+        date: new Date()
+      };
+
+      try {
+        const orderId = await createOrder(orderData);
+        setCartItems([]);
+        Swal.fire({
+          title: '¡Pedido Confirmado!',
+          html: `Tu orden ha sido creada exitosamente.<br><b>Tu ID de compra es:</b><br><code>${orderId}</code>`,
+          icon: 'success',
+          confirmButtonText: '¡Genial!'
+        });
+      } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Error al procesar el pedido', text: 'Hubo un problema al guardar tu orden. Por favor, intenta de nuevo.' });
+      }
+    }
+  }
 
   function countItems() {
     return cartItems.reduce((acc, item) => acc + item.count, 0);
@@ -134,16 +121,7 @@ export function CartProvider(props) {
   }
 
   return (
-    <cartContext.Provider value={{ 
-        cartItems, 
-        addToCart, 
-        removeItemCompleto, 
-        countItems, 
-        calculateTotal, 
-        formatTotalWeight, 
-        finalizePurchase,
-        removeItem: (baseId) => removeItem(baseId, 1) 
-    }}>
+    <cartContext.Provider value={{ cartItems, addToCart, removeItemCompleto, countItems, calculateTotal, finalizePurchase, removeItem }}>
       {props.children}
     </cartContext.Provider>
   );

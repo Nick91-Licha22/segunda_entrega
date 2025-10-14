@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import "./CartContainer.css";
 
 function CartContainer() {
-  const { cartItems, removeItemCompleto, removeItem, calculateTotal, formatTotalWeight, finalizePurchase } = useContext(cartContext);
+  const { cartItems, removeItemCompleto, removeItem, calculateTotal, finalizePurchase } = useContext(cartContext);
 
   if (cartItems.length === 0) {
     return (
@@ -24,19 +24,19 @@ function CartContainer() {
       <div className="cart-items-list">
         {
           cartItems.map(item => (
-            <div key={item.baseId} className="cart-item-card">
+            <div key={item.id} className="cart-item-card">
               <img width="100" src={item.img} alt={item.title} className="cart-item-img" />
               <div className="item-details">
                 <h4>{item.title}</h4>
-                <p>Peso Total: **{formatTotalWeight(item.count)}**</p> 
+                <p>Cantidad: **{item.count} Kilo(s)**</p>
                 <p>Precio (por Kilo): ${item.price}</p>
                 <p className="item-subtotal">Subtotal: **$ {item.price * item.count}**</p>
               </div>
               <div className="item-actions">
-                <button onClick={() => removeItem(item.baseId)} className="btn-remove-one">
+                <button onClick={() => removeItem(item.id)} className="btn-remove-one">
                   -1 Kilo
                 </button>
-                <button onClick={() => removeItemCompleto(item.baseId)} className="btn-remove-all">
+                <button onClick={() => removeItemCompleto(item.id)} className="btn-remove-all">
                   ❌ Quitar Producto
                 </button>
               </div>
