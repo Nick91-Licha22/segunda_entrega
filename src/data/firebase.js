@@ -3,12 +3,12 @@ import { getFirestore, collection, addDoc, getDocs, getDoc, doc, query, where } 
 import productsArray from './products';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCBAgJDe7sy41Mrcu5SWHcVIE3GMBMCut8",
-    authDomain: "syn-verduleria.firebaseapp.com",
-    projectId: "syn-verduleria",
-    storageBucket: "syn-verduleria.firebasestorage.app",
-    messagingSenderId: "1069437381011",
-    appId: "1:1069437381011:web:a001a08d13fff2ad166066"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY, 
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

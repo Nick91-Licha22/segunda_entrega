@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import CartWidget from "./CartWidget";
-import logo from '../../assets/img/logoverduleria.png';
+import logo from '/img/logoverduleria.png';
 import "./NavBar.css";
 
 export default function NavBar() {
