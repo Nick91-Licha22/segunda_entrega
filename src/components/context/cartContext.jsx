@@ -7,7 +7,7 @@ const cartContext = createContext();
 export function CartProvider(props) {
   const [cartItems, setCartItems] = useState([]);
 
-  function addToCart(newItem) {
+  function addToCart(newItem, isOfferCheckout = false) {
     const newCartItems = [...cartItems];
     const index = newCartItems.findIndex(item => item.id === newItem.id);
 
@@ -18,23 +18,25 @@ export function CartProvider(props) {
     }
     setCartItems(newCartItems);
 
-    Swal.fire({
-      toast: true,
-      position: 'bottom-end',
-      icon: 'success',
-      title: `¡Agregaste ${newItem.count} Kilo(s) de ${newItem.title} al carrito! 🛒`,
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      background: '#444',
-      color: '#f5f5f5'
-    });
+    if (!isOfferCheckout) {
+      Swal.fire({
+        toast: true,
+        position: 'bottom-end',
+        icon: 'success',
+        title: `¡Agregaste ${newItem.count} Kilo(s) de ${newItem.title} al carrito! 🛒`,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#444',
+        color: '#f5f5f5'
+      });
+    }
   }
 
   function removeItem(itemId) {
     let newCartItems = [...cartItems];
     const index = newCartItems.findIndex(item => item.id === itemId);
-    
+
     if (index !== -1) {
       if (newCartItems[index].count > 1) {
         newCartItems[index].count -= 1;
@@ -44,7 +46,6 @@ export function CartProvider(props) {
       setCartItems(newCartItems);
     }
   }
-
   function removeItemCompleto(itemId) {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -62,6 +63,10 @@ export function CartProvider(props) {
         Swal.fire('Eliminado!', 'El producto ha sido quitado del carrito.', 'success');
       }
     });
+  }
+
+  function clearCart() {
+    setCartItems([]);
   }
 
   async function finalizePurchase() {
@@ -115,13 +120,13 @@ export function CartProvider(props) {
   function countItems() {
     return cartItems.reduce((acc, item) => acc + item.count, 0);
   }
-  
+
   function calculateTotal() {
     return cartItems.reduce((acc, item) => acc + (item.price * item.count), 0);
   }
 
   return (
-    <cartContext.Provider value={{ cartItems, addToCart, removeItemCompleto, countItems, calculateTotal, finalizePurchase, removeItem }}>
+    <cartContext.Provider value={{ cartItems, addToCart, removeItemCompleto, countItems, calculateTotal, finalizePurchase, removeItem, clearCart }}>
       {props.children}
     </cartContext.Provider>
   );

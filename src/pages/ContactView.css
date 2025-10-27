@@ -1,0 +1,94 @@
+.contact-view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding: 2rem;
+    
+    background-color: #3e3e3e; 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.contact-card {
+    background-color: rgba(44, 134, 71, 0.9);
+    border-radius: 10px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    color: #f5f5f5;
+    margin-bottom: 20px;
+}
+
+.contact-logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 1.5rem;
+}
+
+.contact-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #ffcc00;
+}
+
+.contact-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #e0e0e0;
+}
+
+.contact-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.contact-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.contact-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.whatsapp-icon { color: #25D366; }
+.email-icon { color: #EA4335; }
+.location-icon { color: #4285F4; }
+
+.info-details h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #3f3f3b;
+}
+
+.info-details p {
+    margin: 0;
+    font-size: 1rem;
+    color: #f5f5f5;
+}
+
+.info-details small {
+    font-size: 0.8rem;
+    color: #cccccc;
+}

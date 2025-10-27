@@ -3,7 +3,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #46f62f1d;
+  background-image: url(../../public/img/frutas_tropicales.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -18,7 +21,7 @@
 }
 
 .store-name {
-  font-size: 25px;
+  font-size: 32px;
   font-weight: bold;
 }
 
@@ -28,11 +31,11 @@
 }
 
 .nav-links li a {
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
 .nav-links li a:hover {
-  color: #ffcc00;
+  color: #12f729;
 }
