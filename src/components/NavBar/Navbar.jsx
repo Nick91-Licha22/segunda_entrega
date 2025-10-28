@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import CartWidget from './CartWidget'; 
-import './NavBar.css'; 
+import CartWidget from './CartWidget';
+import './NavBar.css';
 
 function NavBar() {
     return (
@@ -9,7 +9,7 @@ function NavBar() {
                 <img src="/img/logoverduleria.png" alt="Logo" width="40" height="40" className="logo" />
                 <span className="store-name">S&N Verdulería</span>
             </Link>
-            <ul className="nav-links"> 
+            <ul className="nav-links">
                 <li className="nav-item">
                     <Link className="nav-link" to="/category/frutas">Frutas</Link>
                 </li>
